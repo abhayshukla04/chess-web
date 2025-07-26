@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chess Game</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard.js/1.0.0/css/chessboard.min.css" />
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    #board {
+      width: 400px;
+      margin: 0 auto;
+    }
+    #status {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Chess Game</h1>
+  <div id="board"></div>
+  <p id="status">Game in progress...</p>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/1.0.0/chess.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard.js/1.0.0/js/chessboard.min.js"></script>
+  <script>
+    const boardElement = document.getElementById('board');
+    const statusElement = document.getElementById('status');
+
+    const game = new Chess();
+
+    const board = Chessboard('board', {
+      draggable: true,
+      position: 'start',
+      onDrop: function (source, target) {
+        const move = game.move({
+          from: source,
+          to: target,
+          promotion: 'q' // promote to queen
+        });
+
+        if (move === null) return 'snapback';
+
+        updateStatus();
+      }
+    });
+
+    function updateStatus() {
+      let status = '';
+
+      if (game.in_checkmate()) {
+        status = 'Game over: Checkmate!';
+      } else if (game.in_draw()) {
+        status = 'Game over: Draw!';
+      } else {
+        const moveColor = game.turn() === 'w' ? 'White' : 'Black';
+        status = `${moveColor} to move`;
+
+        if (game.in_check()) {
+          status += ` - Check!`;
+        }
+      }
+
+      statusElement.innerHTML = status;
+    }
+  </script>
+</body>
+</html>
